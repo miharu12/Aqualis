@@ -8,11 +8,11 @@ namespace Aqualis
     
     module fft2 = 
         
-        type fftw_plan2(name) =
+        type fftw_plan2(sname_,name) =
             static member sname = "fftw_plan"
-            new(name,c) =
-                str.reg(fftw_plan2.sname,name,c)
-                fftw_plan2 name
+            new(name) =
+                str.regWithoutAddStructure(fftw_plan2.sname,name)
+                fftw_plan2 (fftw_plan2.sname,name)
             member __.code = name
             
         let fftshift2(x:num2) =
@@ -80,16 +80,16 @@ namespace Aqualis
                         writein(plan.code + " = fftw_plan_dft_2d(" + nx.code + ", "+ ny.code + ", " + data1.code + ", " + data2.code + ", FFTW_FORWARD, FFTW_ESTIMATE);")
                         fftshift2 data1
                         !"FFTを実行"
-                        writein("call dfftw_execute(" + plan.code + ");")
+                        writein("fftw_execute(" + plan.code + ");")
                         fftshift2 data2
-                        writein("call dfftw_destroy_plan(" + plan.code + ");")
+                        writein("fftw_destroy_plan(" + plan.code + ");")
                     else
                         writein(plan.code + " = fftw_plan_dft_2d(" + nx.code + ", "+ ny.code + ", " + data1.code + ", " + data2.code + ", FFTW_BACKWARD, FFTW_ESTIMATE);")
                         ifftshift2 data1
                         !"FFTを実行"
-                        writein("dfftw_execute(" + plan.code + ");")
+                        writein("fftw_execute(" + plan.code + ");")
                         ifftshift2 data2
-                        writein("dfftw_destroy_plan(" + plan.code + ");")
+                        writein("fftw_destroy_plan(" + plan.code + ");")
                 |LaTeX ->
                     writein(data2.code + " = \\mathcal{F}\\left[" + data1.code + "\\right]")
                 |HTML ->

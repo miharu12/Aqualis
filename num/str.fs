@@ -220,6 +220,15 @@ module Aqualis_str =
                 let name_ = match programList[0].language with |HTML -> "<mi mathvariant=\"italic\">"+name+"</mi>" |_ -> name
                 programList[0].var.setVar(Structure sname,A0,name_,"")
             
+        static member regWithoutAddStructure(sname,name:string) =
+            let this = programList[0].str
+            let str_ac = match programList[0].language with |Fortran -> "%" |C99 |LaTeX |HTML |HTMLSequenceDiagram |Python |JavaScript |PHP |Numeric -> "."
+            //構造体のメンバの場合はリスト登録不要
+            if name.Contains(str_ac)=false then
+                //構造体変数の宣言
+                let name_ = match programList[0].language with |HTML -> "<mi mathvariant=\"italic\">"+name+"</mi>" |_ -> name
+                programList[0].var.setVar(Structure sname,A0,name_,"")
+                
         static member reg(sname,name:string,size1) =
             let this = programList[0].str
             let str_ac = match programList[0].language with |Fortran -> "%" |C99 |LaTeX |HTML |HTMLSequenceDiagram |Python |JavaScript |PHP |Numeric -> "."

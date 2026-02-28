@@ -87,9 +87,9 @@ namespace Aqualis
                 |C99 ->
                     makeProgram [dir,projectname,C99] <| fun () ->
                         //メインコード生成
-                        programList[prIndex].olist.add "-lm"
                         programList[prIndex].indentInc()
                         code()
+                        programList[prIndex].olist.add "-lm"
                         programList[prIndex].indentDec()
                         programList[prIndex].close()
                         //ソースファイル出力
