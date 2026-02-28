@@ -255,7 +255,7 @@ namespace Aqualis
                                 font.size size; 
                                 font.color color; 
                                 font.weight weight]
-                html.tagb ("div", s1) <| fun () -> writein text
+                html.tagb ("div", [s1.atr]) <| fun () -> writein text
                 
             /// 代入式を描画
             static member substHS (x:expr) (eq:expr) (c:program) =
