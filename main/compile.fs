@@ -87,9 +87,9 @@ namespace Aqualis
                 |C99 ->
                     makeProgram [dir,projectname,C99] <| fun () ->
                         //メインコード生成
-                        programList[prIndex].olist.add "-lm"
                         programList[prIndex].indentInc()
                         code()
+                        programList[prIndex].olist.add "-lm"
                         programList[prIndex].indentDec()
                         programList[prIndex].close()
                         //ソースファイル出力
@@ -411,7 +411,7 @@ namespace Aqualis
                                         writein "<link href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap\" rel=\"stylesheet\">"
                                     // body要素
                                     let s0 = Style [area.backGroundColor "#ffffff"]
-                                    html.tagb ("body", s0) <| fun () ->
+                                    html.tagb ("body", [s0.atr]) <| fun () ->
                                         writein codeBody
                             for i in 0..1 do
                                 programList[i].close()

@@ -72,21 +72,21 @@ type TextBox(name:PHPdata) =
     member _.show_copy() = t.input_copy()
     /// テキストボックスの表示(スタイル指定)
     member _.show(s:string) = t.input s
-    member _.show(atr:list<string*string>) = t.input atr
+    member _.show(atr:list<Atr>) = t.input atr
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(text:string,atr:list<string*string>) = t.input(text,atr)
+    member _.show(text:string,atr:list<Atr>) = t.input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(text:PHPdata,atr:list<string*string>) = t.input(text,atr)
+    member _.show(text:PHPdata,atr:list<Atr>) = t.input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(text:num0,atr:list<string*string>) = t.input(PHPdata text,atr)
+    member _.show(text:num0,atr:list<Atr>) = t.input(PHPdata text,atr)
     member _.show_lock(v:PHPdata) = t.input_lock v
     member _.show_lock(v:num0) = t.input_lock v
     member _.show_lock(v:string) = t.input_lock v
-    member _.show_lock(v:PHPdata,atr:list<string*string>) = t.input_lock (v,atr)
-    member _.show_lock(v:num0,atr:list<string*string>) = t.input_lock (v,atr)
-    member _.show_lock(v:string,atr:list<string*string>) = t.input_lock (v,atr)
+    member _.show_lock(v:PHPdata,atr:list<Atr>) = t.input_lock (v,atr)
+    member _.show_lock(v:num0,atr:list<Atr>) = t.input_lock (v,atr)
+    member _.show_lock(v:string,atr:list<Atr>) = t.input_lock (v,atr)
     /// テキストボックスの表示(送信テキストを表示)
-    member _.show_copy(atr:list<string*string>) = t.input_copy atr
+    member _.show_copy(atr:list<Atr>) = t.input_copy atr
     /// テキストボックスの表示(送信テキストを表示、編集不可)
     member _.show_copy_lock() = t.input_copy_lock()
     /// テキストボックスの表示(パスワード入力用)
@@ -122,17 +122,17 @@ type TextBoxVar() =
     /// テキストボックスの表示(スタイル指定)
     member _.show(id:string,s:PHPdata) = (post id).input s
     /// テキストボックスの表示(スタイル指定)
-    member _.show(id:PHPdata,atr:list<string*string>) = (post id).input atr
+    member _.show(id:PHPdata,atr:list<Atr>) = (post id).input atr
     /// テキストボックスの表示(スタイル指定)
-    member _.show(id:string,atr:list<string*string>) = (post id).input atr
+    member _.show(id:string,atr:list<Atr>) = (post id).input atr
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(id:PHPdata,text:string,atr:list<string*string>) = (post id).input(text,atr)
+    member _.show(id:PHPdata,text:string,atr:list<Atr>) = (post id).input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(id:string,text:string,atr:list<string*string>) = (post id).input(text,atr)
+    member _.show(id:string,text:string,atr:list<Atr>) = (post id).input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(id:PHPdata,text:PHPdata,atr:list<string*string>) = (post id).input(text,atr)
+    member _.show(id:PHPdata,text:PHPdata,atr:list<Atr>) = (post id).input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
-    member _.show(id:string,text:PHPdata,atr:list<string*string>) = (post id).input(text,atr)
+    member _.show(id:string,text:PHPdata,atr:list<Atr>) = (post id).input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定、編集不可)
     member _.show_lock(id:PHPdata,v:PHPdata) = (post id).input_lock v
     /// テキストボックスの表示(表示テキストとスタイル指定、編集不可)
@@ -142,9 +142,9 @@ type TextBoxVar() =
     /// テキストボックスの表示(表示テキストとスタイル指定、編集不可)
     member _.show_lock(id:string,v:string) = (post id).input_lock v
     /// テキストボックスの表示(送信テキストを表示)
-    member _.show_copy(id:PHPdata,atr:list<string*string>) = (post id).input_copy atr
+    member _.show_copy(id:PHPdata,atr:list<Atr>) = (post id).input_copy atr
     /// テキストボックスの表示(送信テキストを表示)
-    member _.show_copy(id:string,atr:list<string*string>) = (post id).input_copy atr
+    member _.show_copy(id:string,atr:list<Atr>) = (post id).input_copy atr
     /// テキストボックスの表示(送信テキストを表示、編集不可)
     member _.show_copy_lock(id:PHPdata) = (post id).input_copy_lock()
     /// テキストボックスの表示(送信テキストを表示、編集不可)
@@ -171,10 +171,10 @@ type TextArea(name:PHPdata) =
     member _.isset with get() = php.isset a.get
     member _.show() = a.textArea()
     member _.show_contents_ (code:unit->unit) = a.textArea code
-    member _.show_contents (atr:list<string*string>) = fun (code:unit->unit) -> a.textArea_contents atr code
-    member _.show(atr:list<string*string>) = a.textArea atr
+    member _.show_contents (atr:list<Atr>) = fun (code:unit->unit) -> a.textArea_contents atr code
+    member _.show(atr:list<Atr>) = a.textArea atr
     member _.show_copy() = a.textArea()
-    member _.show_copy(atr:list<string*string>) = a.textArea_copy atr
+    member _.show_copy(atr:list<Atr>) = a.textArea_copy atr
     
 type ComboBoxItem = {Tag:string; Text:string}
 

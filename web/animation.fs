@@ -186,7 +186,7 @@ type AnimationText(s:Style,originX:int,originY:int,canvasX:int,canvasY:int) =
     let ss0 = Style ([{Key="display";Value="none"}]@ss.list)
     let ss1 = Style ([{Key="display";Value="block"}]@ss.list)
     do
-        html.tagb ("div", "id = \"" + id + "\" " + ss0.code) <| fun () -> ()
+        html.tagb ("div", [Atr("id",id); ss0.atr]) <| fun () -> ()
     /// 割り当てられたidを取得
     member this.ID with get() = id
     /// 指定したTextオブジェクトをキャンパスに追加する
@@ -476,46 +476,45 @@ module htmlexpr =
         /// 見出し（h1）要素を生成する
         /// t：見出しに表示する内容
         /// atr：文字の太さ、色を定義するスタイル情報
-        static member h1 (t:num0,atr:Style) = fun code ->
-            html.tagb ("h1",atr) <| fun () -> php.echo t.code
+        static member h1 (t:num0,s:Style) = fun code ->
+            html.tagb ("h1",[s.atr]) <| fun () -> php.echo t.code
             code()
             
         static member h2 (t:num0) = fun code ->
             html.tagb "h2" <| fun () -> php.echo t.code
             code()
-        static member h2 (t:num0,atr:Style) = fun code ->
-            html.tagb ("h2",atr) <| fun () -> php.echo t.code
+        static member h2 (t:num0,s:Style) = fun code ->
+            html.tagb ("h2",[s.atr]) <| fun () -> php.echo t.code
             code()
             
         static member h3 (t:num0) = fun code ->
             html.tagb "h3" <| fun () -> php.echo t.code
             code()
-        static member h3 (t:num0,atr:Style) = fun code ->
-            html.tagb ("h3",atr) <| fun () -> php.echo t.code
+        static member h3 (t:num0,s:Style) = fun code ->
+            html.tagb ("h3",[s.atr]) <| fun () -> php.echo t.code
             code()
             
         static member h4 (t:num0) = fun code ->
             html.tagb "h4" <| fun () -> php.echo t.code
             code()
-        static member h4 (t:num0,atr:Style) = fun code ->
-            html.tagb ("h4",atr) <| fun () -> php.echo t.code
+        static member h4 (t:num0,s:Style) = fun code ->
+            html.tagb ("h4",[s.atr]) <| fun () -> php.echo t.code
             code()
 
         static member h5 (t:num0) = fun code ->
             html.tagb "h5" <| fun () -> php.echo t.code
             code()
-        static member h5 (t:num0,atr:Style) = fun code ->
-            html.tagb ("h5",atr) <| fun () -> php.echo t.code
+        static member h5 (t:num0,s:Style) = fun code ->
+            html.tagb ("h5",[s.atr]) <| fun () -> php.echo t.code
             code()
-        
         /// フォーム送信用のsubmitボタンを生成する
-        /// nameとvalueの型違いに対応したオーバーロードを提供する
-        static member submit(name:string,value:PHPdata) = html.taga("input",["type","\"submit\""; "name","\""+name+"\""; "value",(value.code)])
+        /// nameとvalueの型違いに対応したオーバーロードを提供する            
+        static member submit(name:string,value:PHPdata) = html.taga("input",[Atr("type","\"submit\""); Atr("name","\""+name+"\""); Atr("value",value.code)])
         static member submit(name:PHPdata,value:string) = html.taga("input",["type",PHPdata "submit"; "name", name; "value",PHPdata value])
         /// フォーム送信用のsubmitボタンを生成する
         /// name：name属性に設定する文字列
         /// value：value属性に設定する文字列
-        static member submit(name:string,value:string) = html.taga("input",["type","\"submit\""; "name","\""+name+"\""; "value","\""+value+"\""])
+        static member submit(name:string,value:string) = html.taga("input",[Atr("type","\"submit\""); Atr("name","\""+name+"\""); Atr("value","\""+value+"\"")])
         /// 送信先URLを指定したsubmitボタンを生成する
         /// url：formaction属性に設定するURL
         /// name：name属性に設定するPHPデータ
@@ -568,48 +567,50 @@ module htmlexpr =
         static member div (a:CSSdata) = fun code -> 
             match a.label with
             |HTMLTag s -> html.tagb s code
-            |CSSClass s -> html.tagb ("div",["class",s]) code
-            |CSSID s -> html.tagb ("div",["id",s]) code
+            |CSSClass s -> html.tagb ("div",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("div",[Atr("id",s)]) code
             |_ -> ()
         /// CSSdataの内容に応じてHTML要素を生成する
         /// a：生成対象を指定するCSSデータ
         /// atr：追加する属性のリスト
-        static member div (a:CSSdata,atr:list<string*string>) = fun code -> 
+        static member div (a:CSSdata,atr:list<Atr>) = fun code -> 
             match a.label with
             |HTMLTag s -> html.tagb s code
-            |CSSClass s -> html.tagb ("div",["class",s]@atr) code
-            |CSSID s -> html.tagb ("div",["id",s]@atr) code
+            |CSSClass s -> html.tagb ("div",[Atr("class",s)]@atr) code
+            |CSSID s -> html.tagb ("div",[Atr("id",s)]@atr) code
             |_ -> ()
         /// CSSdataに基づいてarticle要素を生成する
         /// a：要素に適用するCSSデータ
         static member article (a:CSSdata) = fun code -> 
             match a.label with
-            |CSSClass s -> html.tagb ("article",["class",s]) code
-            |CSSID s -> html.tagb ("article",["id",s]) code
+            |CSSClass s -> html.tagb ("article",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("article",[Atr("id",s)]) code
             |_ -> ()
         /// CSSdataに基づいてaside要素を生成する
         static member aside (a:CSSdata) = fun code -> 
             match a.label with
-            |CSSClass s -> html.tagb ("aside",["class",s]) code
-            |CSSID s -> html.tagb ("aside",["id",s]) code
+            |CSSClass s -> html.tagb ("aside",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("aside",[Atr("id",s)]) code
             |_ -> ()
         /// CSSdataに基づいてpara要素を生成する
         static member para (a:CSSdata) = fun code -> 
             match a.label with
-            |CSSClass s -> html.tagb ("p",["class",s]) code
-            |CSSID s -> html.tagb ("p",["id",s]) code
+            |CSSClass s -> html.tagb ("p",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("p",[Atr("id",s)]) code
             |_ -> ()
         /// CSSdataに基づいてsection要素を生成する
         static member section (a:CSSdata) = fun code -> 
             match a.label with
-            |CSSClass s -> html.tagb ("section",["class",s]) code
-            |CSSID s -> html.tagb ("section",["id",s]) code
+            |CSSClass s -> html.tagb ("section",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("section",[Atr("id",s)]) code
             |_ -> ()
         /// CSSdataに基づいてspan要素を生成する
         static member span (a:CSSdata) = fun code -> 
             match a.label with
-            |CSSClass s -> html.tagb0 ("span",["class",s]) code
-            |CSSID s -> html.tagb0 ("span",["id",s]) code
+            // |CSSClass s -> html.tagb0 ("span",["class",s]) code
+            // |CSSID s -> html.tagb0 ("span",["id"
+            |CSSClass s -> html.tagb ("span",[Atr("class",s)]) code
+            |CSSID s -> html.tagb ("span",[Atr("id",s)]) code
             |_ -> ()
             
         /// チェックボックス（チェックされたとき1、チェックされていないとき0を送信）
@@ -636,7 +637,7 @@ module htmlexpr =
             let s1 = Style [{Key = "margin-left"; Value=p.x.ToString()+"px"}
                             {Key = "margin-top"; Value=p.y.ToString()+"px"}
                             {Key = "position"; Value = "absolute";}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein ("\\(" + text.code + "\\)")
         /// 指定位置に画像を表示する
         /// s：適用するスタイル
@@ -733,14 +734,14 @@ module htmlexpr =
         /// borderV：垂直罫線の設定
         /// tlist：表データ
         static member listTable (caption:string) = fun (borderH:list<BorderH>) (borderV:list<BorderV>) (tlist:list<list<string>>) ->
-            html.tagb("div",["class","\"fig\""]) <| fun () ->
-                html.tagb ("span",["class","\"caption\""]) <| fun () ->
+            html.tagb("div",[Atr("class","\"fig\"")]) <| fun () ->
+                html.tagb ("span",[Atr("class","\"caption\"")]) <| fun () ->
                     writein(caption)
-                html.tagb("table",["class","\"tab\""]) <| fun () ->
+                html.tagb("table",[Atr("class","\"tab\"")]) <| fun () ->
                     for j in 0..tlist.Length-1 do
-                        html.tagb ("tr",["class",match borderV[j] with |TrTB -> "\"trtb\"" |TrT -> "\"trt\"" |TrB -> "\"trb\"" |TrN -> "\"trn\""]) <| fun () ->
+                        html.tagb ("tr",[Atr("class",match borderV[j] with |TrTB -> "\"trtb\"" |TrT -> "\"trt\"" |TrB -> "\"trb\"" |TrN -> "\"trn\"")]) <| fun () ->
                             for i in 0..tlist[j].Length-1 do
-                                html.tagb ("td",["class",
+                                html.tagb ("td",[Atr("class",
                                     match borderH[i] with
                                     |TdL -> "\"tdl\""
                                     |TdC -> "\"tdc\""
@@ -757,7 +758,7 @@ module htmlexpr =
                                     |TdLLR -> "\"tdlLR\""
                                     |TdCLR -> "\"tdcLR\""
                                     |TdRLR -> "\"tdrLR\""
-                                    |TdJLR -> "\"tdjLR\""]) <| fun () ->
+                                    |TdJLR -> "\"tdjLR\"")]) <| fun () ->
                                     writein <| tlist[j][i]
         /// num0式を評価し、MathJax形式で出力する
         static member eq(text:num0) =
@@ -769,7 +770,7 @@ module htmlexpr =
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein ("\\("+text.Expr.evalL programList[prIndex]+"\\)")
                 
         static member eqD (s:Style) = fun (p:position) (size:int) (color:string) (text:list<num0>) ->
@@ -778,7 +779,7 @@ module htmlexpr =
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein ("\\(\\begin{align}"+String.Join("\\\\",text |> List.map(fun t -> t.Expr.evalL programList[prIndex]))+"\\end{align}\\)")
                 
         /// キャラクター付き解説ページ
@@ -867,7 +868,7 @@ module htmlexpr =
                     printfn "directory not exist: %s" contentsDir
             else
                 printfn "image file not exist: %s" filename
-            html.taga ("img", s1+s)
+            html.taga ("img", [(s1+s).atr])
         /// 指定位置・サイズでテキストブロックを生成
         /// s：適用するスタイル
         /// p：表示位置
@@ -881,7 +882,7 @@ module htmlexpr =
                             {Key = "margin-top"; Value = p.y.ToString()+"px";}
                             {Key = "position"; Value = "absolute";}
                             {Key = "overflow-wrap"; Value = "break-word";}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 text |> List.iter (fun s -> writein (s+"<br>"))
                 writein("\r\n")
             {Left = p.x;
@@ -1028,7 +1029,7 @@ type FigureAnimation(figcounter:int,originX:int,originY:int,canvasX:int,canvasY:
             {Key="margin-left";Value=(double originX+center.x).ToString()+"px"}
             {Key="margin-top";Value=(double originY+double canvasY-center.y).ToString()+"px"}]
         let ss = Style (s.list@c)
-        html.tagb ("div", ss.code) <| fun () ->
+        html.tagb ("div", [ss.atr]) <| fun () ->
             writein str
     /// 数式を描画
     /// e：表示する数式
@@ -1039,7 +1040,7 @@ type FigureAnimation(figcounter:int,originX:int,originY:int,canvasX:int,canvasY:
             {Key="margin-left";Value=(double originX+center.x).ToString()+"px"}
             {Key="margin-top";Value=(double originY+double canvasY-center.y).ToString()+"px"}]
         let ss = Style (s.list@c)
-        html.tagb ("div", ss.code) <| fun () ->
+        html.tagb ("div", [ss.atr]) <| fun () ->
             writein ("\\(" + e.Expr.evalH programList[prIndex] + "\\)")
     /// 画像を表示
     /// filename：画像のファイル名
@@ -1052,7 +1053,7 @@ type FigureAnimation(figcounter:int,originX:int,originY:int,canvasX:int,canvasY:
             {Key="margin-left";Value=(double originX+center.x).ToString()+"px"}
             {Key="margin-top";Value=(double originY+double canvasY-center.y).ToString()+"px"}]
         let ss = Style (s.list@c)
-        html.taga ("img", [Atr ss.code; Atr("src",contentsDir + "\\" + f)])
+        html.taga ("img", [ss.atr; Atr("src",contentsDir + "\\" + f)])
     /// 開始ボタンの制御用JavaScriptコードを生成
     /// buttonIndex：対象となるボタンの識別子
     member this.jsStartControll(buttonIndex:string) =
@@ -1214,38 +1215,38 @@ module dochtml =
                         match pagesizeX,pagesizeY with
                         |None,None ->
                             let s0 = Style [area.backGroundColor "#ffffff"]
-                            html.tagb ("body", s0) <| fun () ->
+                            html.tagb ("body", [s0.atr]) <| fun () ->
                                 writein codeBody
                         |Some x,None ->
                             let s0 = Style [area.backGroundColor "#aaaaaa"]
-                            html.tagb ("body", s0) <| fun () ->
+                            html.tagb ("body", [s0.atr]) <| fun () ->
                                 let s1 = Style [
                                     area.backGroundColor "#ffffff"
                                     margin.left "auto"
                                     margin.right "auto"
                                     size.width (x.ToString()+"px")]
-                                html.tagb ("div", s1) <| fun () ->
+                                html.tagb ("div", [s1.atr]) <| fun () ->
                                     writein codeBody
                         |None,Some y->
                             let s0 = Style [area.backGroundColor "#aaaaaa"]
-                            html.tagb ("body", s0) <| fun () ->
+                            html.tagb ("body", [s0.atr]) <| fun () ->
                                 let s1 = Style [
                                     area.backGroundColor "#ffffff"
                                     margin.left "auto"
                                     margin.right "auto"
                                     size.height (y.ToString()+"px")]
-                                html.tagb ("div", s1) <| fun () ->
+                                html.tagb ("div", [s1.atr]) <| fun () ->
                                     writein codeBody
                         |Some x,Some y ->
                             let s0 = Style [area.backGroundColor "#aaaaaa"]
-                            html.tagb ("body", s0) <| fun () ->
+                            html.tagb ("body", [s0.atr]) <| fun () ->
                                 let s1 = Style [
                                     area.backGroundColor "#ffffff"
                                     margin.left "auto"
                                     margin.right "auto"
                                     size.width (x.ToString()+"px")
                                     size.height (y.ToString()+"px")]
-                                html.tagb ("div", s1) <| fun () ->
+                                html.tagb ("div", [s1.atr]) <| fun () ->
                                     writein codeBody
                                     
                 switchJSAnimationStart <| fun () ->

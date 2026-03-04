@@ -21,14 +21,14 @@ type post(id:PHPdata) =
                 "value", PHPdata ""
             ]
         )
-    member _.input(a:list<string*string>) =
+    member _.input(a:list<Atr>) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
                 "name", id
                 "value", PHPdata ""
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun (p:Atr) -> p.name,PHPdata p.value))
         )
 
     ///パスワード入力テキストボックス
@@ -61,24 +61,24 @@ type post(id:PHPdata) =
             ]
         )
 
-    member _.input(value:PHPdata,a:list<string*string>) =
+    member _.input(value:PHPdata,a:list<Atr>) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
                 "name", id
                 "value", value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
          
-    member _.input(value:string,a:list<string*string>) =
+    member _.input(value:string,a:list<Atr>) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
                 "name", id
                 "value", PHPdata value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
 
     member _.textArea() =
@@ -97,21 +97,21 @@ type post(id:PHPdata) =
                 "name", id
             ]
         ) <| fun () -> code()
-    member _.textArea(a:list<string*string>) = 
+    member _.textArea(a:list<Atr>) = 
         html.tagb0(
             "textarea",
             [
                 "type", PHPdata "text"
                 "name", id
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         ) <| fun () -> ()
-    member _.textArea_contents(a:list<string*string>) = fun code ->
+    member _.textArea_contents(a:list<Atr>) = fun code ->
         html.tagb0(
             "textarea",
             [
                 "type", PHPdata "text"
                 "name", id
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         ) code
     member this.textArea_copy() =
         html.tagb(
@@ -121,13 +121,13 @@ type post(id:PHPdata) =
                 "name", id
             ]
         ) <| fun () -> writein this.get_html.phpcode
-    member this.textArea_copy(a:list<string*string>) =
+    member this.textArea_copy(a:list<Atr>) =
         html.tagb(
             "textarea",
             [
                 "type", PHPdata "text"
                 "name", id
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         ) <| fun () -> writein this.get_html.phpcode
     member _.textArea(value:string) =
         html.tagb(
@@ -157,7 +157,7 @@ type post(id:PHPdata) =
                 "value", PHPdata value
             ]
         )
-    member _.input_lock(value:PHPdata,a:list<string*string>) =
+    member _.input_lock(value:PHPdata,a:list<Atr>) =
         html.taga(
             "input",
             [
@@ -165,9 +165,9 @@ type post(id:PHPdata) =
                 "name", id
                 "readonly",PHPdata "readonly"
                 "value", value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
-    member _.input_lock(value:string,a:list<string*string>) =
+    member _.input_lock(value:string,a:list<Atr>) =
         html.taga(
             "input",
             [
@@ -175,7 +175,7 @@ type post(id:PHPdata) =
                 "name", id
                 "readonly",PHPdata "readonly"
                 "value", PHPdata value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
 
     ///テキストボックス
@@ -188,14 +188,14 @@ type post(id:PHPdata) =
                 "value", PHPdata value
             ]
         )
-    member _.input(value:num0,a:list<string*string>) =
+    member _.input(value:num0,a:list<Atr>) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
                 "name", id
                 "value", PHPdata value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
 
     member _.input_lock(value:num0) =
@@ -208,7 +208,7 @@ type post(id:PHPdata) =
                 "value", PHPdata value
             ]
         )
-    member _.input_lock(value:num0,a:list<string*string>) =
+    member _.input_lock(value:num0,a:list<Atr>) =
         html.taga(
             "input",
             [
@@ -216,7 +216,7 @@ type post(id:PHPdata) =
                 "name", id
                 "readonly",PHPdata "readonly"
                 "value", PHPdata value
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
 
     ///パスワード入力テキストボックス
@@ -249,14 +249,14 @@ type post(id:PHPdata) =
                 "value", this.get
             ]
         )
-    member this.input_copy(a:list<string*string>) = 
+    member this.input_copy(a:list<Atr>) = 
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
                 "name", id
                 "value", this.get
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
     member this.input_copy_lock() = 
         html.taga(
@@ -268,7 +268,7 @@ type post(id:PHPdata) =
                 "value", this.get
             ]
         )
-    member this.input_copy_lock(a:list<string*string>) = 
+    member this.input_copy_lock(a:list<Atr>) = 
         html.taga(
             "input",
             [
@@ -276,7 +276,7 @@ type post(id:PHPdata) =
                 "name", id
                 "readonly", PHPdata "readonly"
                 "value", this.get
-            ]@(a |> List.map (fun (r,s) -> r,PHPdata s))
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
     ///パスワード入力テキストボックス（送信済みのメッセージを表示）
     member this.password_copy() = 
@@ -352,14 +352,14 @@ type postFile(id:PHPdata) =
         br.if1(bool0(Var(Nt, "move_uploaded_file($_FILES['file_upload']['tmp_name'], " + upload.code + ")", NaN))) <| fun () ->
             php.echo "アップロード完了"
     member this.file_select() =
-        html.tagb ("form", ["enctype","multipart/form-data"; "method","post";]) <| fun () ->
-            html.taga ("input", ["input name",id.toString(".",StrQuotation); "type","file";])
-            html.taga ("input", ["type","submit"; "value","アップロード";])
+        html.tagb ("form", [Atr("enctype","multipart/form-data"); Atr("method","post");]) <| fun () ->
+            html.taga ("input", [Atr("input name",id.toString(".",StrQuotation)); Atr("type","file");])
+            html.taga ("input", [Atr("type","submit"); Atr("value","アップロード");])
     member this.file_select(action_phpfile:string) =
-        html.tagb ("form", ["action",action_phpfile; "enctype","multipart/form-data"; "method","post";]) <| fun () ->
-            html.taga ("input", ["input name",id.toString(".",StrQuotation); "type","file";])
-            html.taga ("input", ["type","submit"; "value","アップロード";])
-    member this.files_upload(dir) =
+        html.tagb ("form", [Atr("action",action_phpfile); Atr("enctype","multipart/form-data"); Atr("method","post");]) <| fun () ->
+            html.taga ("input", [Atr("input name",id.toString(".",StrQuotation)); Atr("type","file");])
+            html.taga ("input", [Atr("type","submit"); Atr("value","アップロード");])
+    member this.files_upload dir =
         let file = PHPdata.var "_FILES"
         br.if1(php.isset(file[id])) <| fun () ->
             file.[id].["name"].foreach <| fun i ->
