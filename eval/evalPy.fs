@@ -178,8 +178,12 @@ namespace Aqualis
                     |(Add _|Sub _),_ -> "(" + x.evalPy c + ")*" + y.evalPy c
                     |_,(Add _|Sub _) -> x.evalPy c + "*(" + y.evalPy c + ")"
                     |_ -> x.evalPy c + "*" + y.evalPy c
-                |Div(Dt,x,y) when x.etype = It 4 && y.etype = It 4 -> 
-                    (ToDbl x/ToDbl y).evalPy c
+                |Div(It _,x,y) ->
+                    match x,y with
+                    |(Add _|Sub _),(Add _|Sub _|Mul _|Div _) -> "(" + x.evalPy c + ")//(" + y.evalPy c + ")"
+                    |(Add _|Sub _),_ -> "(" + x.evalPy c + ")//" + y.evalPy c
+                    |_,(Add _|Sub _|Mul _|Div _) -> x.evalPy c + "//(" + y.evalPy c + ")"
+                    |_ -> x.evalPy c + "//" + y.evalPy c
                 |Div(_,x,y) ->
                     match x,y with
                     |(Add _|Sub _),(Add _|Sub _|Mul _|Div _) -> "(" + x.evalPy c + ")/(" + y.evalPy c + ")"
@@ -226,7 +230,7 @@ namespace Aqualis
                 |Ceil x -> "math.ceil(" + x.evalPy c + ")"
                 |Re x -> "(" + x.evalPy c + ").real"
                 |Im x -> "(" + x.evalPy c + ").imag"
-                |Conj x -> "conjugate(" + x.evalPy c + ")"
+                |Conj x -> x.evalPy c + ".conjugate()"
                 |Idx1 (_,name,i) -> name + "[" + i.evalPy c + "]"
                 |Idx2 (_,name,i,j) -> name + "[" + i.evalPy c + "," + j.evalPy c + "]"
                 |Idx3 (_,name,i,j,k) -> name + "[" + i.evalPy c + "," + j.evalPy c + "," + k.evalPy c + "]"

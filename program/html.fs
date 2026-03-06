@@ -10,30 +10,35 @@ namespace Aqualis
     
     type CSS = {Key:string; Value:string}
     
-    type Atr(s:string) =
-        new(s:string,t:string) = Atr (s+" = \""+t+"\"")
-        new(s:Style) = 
-            let h:string = s.code
-            Atr h
-        member _.code with get() = s
+    type Atr(s:string,t:string) =
+        new(s:string) = Atr(s,"")
+        // new(s:Style) = 
+        //     let h:string = s.code
+        //     Atr h
+        member _.name with get() = s
+        member _.value with get() = t
+        member _.code with get() = 
+            match t with
+            |"" -> s
+            |_ -> s+" = \""+t+"\""
         static member list(s:list<Atr>) = 
             String.concat " " (
                 s 
                 |> List.map (fun (s:Atr) -> s.code)
                 |> List.filter (fun s -> s<>"")) 
-
+                
     and Style(s:list<CSS>) =
         member _.list with get() = s
         member _.code0 with get() =
             s 
             |> List.map (fun s -> s.Key+": "+s.Value) 
             |> fun s -> String.concat "; " s + ";"
-        member _.code with get() =
-            s 
-            |> List.map (fun s -> s.Key+": "+s.Value) 
-            |> fun s -> String.concat "; " s
-            |> fun s -> if s = "" then "" else "style = \""+s+"\""
-        member this.atr with get() = Atr this.code
+        // member _.code with get() =
+        //     s 
+        //     |> List.map (fun s -> s.Key+": "+s.Value) 
+        //     |> fun s -> String.concat "; " s
+        //     |> fun s -> if s = "" then "" else "style = \""+s+"\""
+        member this.atr with get() = Atr("style", this.code0)
         static member (+) (a:Style,b:Style) = Style(a.list@b.list)
         static member blank = Style []
         
@@ -228,18 +233,18 @@ namespace Aqualis
             code()
             writein "</body>"
             writein "</html>"
-        /// 内部要素のないタグ
-        static member taga (t:string,s:Style) =
-            writein("<"+t+" "+s.code+" />")
+        // /// 内部要素のないタグ
+        // static member taga (t:string,s:Style) =
+        //     writein("<"+t+" "+s.code+" />")
         /// 内部要素のないタグ
         static member taga (t:string,atr:list<Atr>) =
             writein("<"+t+" "+Atr.list atr+" />")
-        /// 内部要素のないタグ
-        static member taga (t:string,lst:list<string*string>) =
-            writein("<"+t+" ")
-            for a,s in lst do
-                writein(a + "=" + s + " ")
-            writein " />"
+        // 内部要素のないタグ
+        // static member taga (t:string,lst:list<string*string>) =
+        //     writein("<"+t+" ")
+        //     for a,s in lst do
+        //         writein(a + "=" + s + " ")
+        //     writein " />"
         /// 内部要素のないタグ
         static member taga (t:string) =
             writein("<"+t+" ")
@@ -247,15 +252,15 @@ namespace Aqualis
         /// 内部要素のないタグ
         static member taga (t:string,a:string) =
             writein("<"+t+" "+a+" />")
-        /// 内部要素のあるタグ
-        static member tagb (t:string,atr:Style) = fun code ->
-            let a = atr.code
-            if a = "" then
-                writein("<"+t+">")
-            else
-                writein("<"+t+" "+a+" >")
-            code()
-            writein ("</"+t+">")
+        // /// 内部要素のあるタグ
+        // static member tagb (t:string,atr:Style) = fun code ->
+        //     let a = atr.code
+        //     if a = "" then
+        //         writein("<"+t+">")
+        //     else
+        //         writein("<"+t+" "+a+" >")
+        //     code()
+        //     writein ("</"+t+">")
         /// 内部要素のあるタグ
         static member tagb (t:string,atr:list<Atr>) = fun code ->
             let a = Atr.list atr
@@ -266,17 +271,17 @@ namespace Aqualis
             code()
             writein ("</"+t+">")
             
-        /// 内部要素のあるタグ
-        static member tagb (t:string,lst:list<string*string>) = fun code ->
-            if lst.Length=0 then
-                writein("<"+t+">")
-            else
-                writein("<"+t+" ")
-                for a,s in lst do
-                    writein(a + "=\"" + s + "\" ")
-                writein ">"
-            code()
-            writein ("</"+t+">")
+        // /// 内部要素のあるタグ
+        // static member tagb (t:string,lst:list<string*string>) = fun code ->
+        //     if lst.Length=0 then
+        //         writein("<"+t+">")
+        //     else
+        //         writein("<"+t+" ")
+        //         for a,s in lst do
+        //             writein(a + "=\"" + s + "\" ")
+        //         writein ">"
+        //     code()
+        //     writein ("</"+t+">")
         /// 内部要素のあるタグ
         static member tagb (t:string,a:string) = fun code ->
             if a="" then
@@ -291,19 +296,19 @@ namespace Aqualis
             code()
             writein ("</"+t+">")
 
-        /// 内部要素のあるタグ
-        static member tagb0 (t:string,lst:list<string*string>) = fun code ->
-            if lst.Length=0 then
-                write("<"+t+">")
-            else
-                writen("<"+t+" ")
-                programList[prIndex].indentInc()
-                for a,s in lst do
-                    writen(a + " = \"" + s + "\"")
-                programList[prIndex].indentDec()
-                write ">"
-            code()
-            writen ("</"+t+">")
+        // /// 内部要素のあるタグ
+        // static member tagb0 (t:string,lst:list<string*string>) = fun code ->
+        //     if lst.Length=0 then
+        //         write("<"+t+">")
+        //     else
+        //         writen("<"+t+" ")
+        //         programList[prIndex].indentInc()
+        //         for a,s in lst do
+        //             writen(a + " = \"" + s + "\"")
+        //         programList[prIndex].indentDec()
+        //         write ">"
+        //     code()
+        //     writen ("</"+t+">")
             
         static member tagv (t:string,atr:list<Atr>) =
             writein("<" + t + " " + Atr.list atr + ">")
@@ -315,40 +320,40 @@ namespace Aqualis
             html.tagb "h1" <| fun () -> writein t
             code()
             
-        static member h1 (t:string,atr:Style) = fun code ->
-            html.tagb ("h1",atr) <| fun () -> writein t
+        static member h1 (t:string,s:Style) = fun code ->
+            html.tagb ("h1",[s.atr]) <| fun () -> writein t
             code()
             
         static member h2 (t:string) = fun code ->
             html.tagb "h2" <| fun () -> writein t
             code()
             
-        static member h2 (t:string,atr:Style) = fun code ->
-            html.tagb ("h2",atr) <| fun () -> writein t
+        static member h2 (t:string,s:Style) = fun code ->
+            html.tagb ("h2",[s.atr]) <| fun () -> writein t
             code()
         static member h3 (t:string) = fun code ->
             html.tagb "h3" <| fun () -> writein t
             code()
-        static member h3 (t:string,atr:Style) = fun code ->
-            html.tagb ("h3",atr) <| fun () -> writein t
+        static member h3 (t:string,s:Style) = fun code ->
+            html.tagb ("h3",[s.atr]) <| fun () -> writein t
             code()
         static member h4 (t:string) = fun code ->
             html.tagb "h4" <| fun () -> writein t
             code()
-        static member h4 (t:string,atr:Style) = fun code ->
-            html.tagb ("h4",atr) <| fun () -> writein t
+        static member h4 (t:string,s:Style) = fun code ->
+            html.tagb ("h4",[s.atr]) <| fun () -> writein t
             code()
         static member h5 (t:string) = fun code ->
             html.tagb "h5" <| fun () -> writein t
             code()
-        static member h5 (t:string,atr:Style) = fun code ->
-            html.tagb ("h5",atr) <| fun () -> writein t
+        static member h5 (t:string,s:Style) = fun code ->
+            html.tagb ("h5",[s.atr]) <| fun () -> writein t
             code()
-        static member form (action:string) = fun code -> html.tagb ("form",["method","post"; "action",action;]) code
-        static member form_fileUpload (action:string) = fun code -> html.tagb ("form",["method","post"; "enctype","multipart/form-data"; "action",action;]) code
-        static member submit(url:string,name:string,value:string) = html.taga("input",["type","submit"; "name",name; "value",value; "formaction",url])
-        static member table_ code = html.tagb "table" code
-        static member table (a:list<string*string>) = fun code -> html.tagb ("table",a) code
+        static member form (action:string) = fun code -> html.tagb ("form",[Atr("method","post"); Atr("action",action);]) code
+        static member form_fileUpload (action:string) = fun code -> html.tagb ("form",[Atr("method","post"); Atr("enctype","multipart/form-data"); Atr("action",action);]) code
+        static member submit(url:string,name:string,value:string) = html.taga("input",[Atr("type","submit"); Atr("name",name); Atr("value",value); Atr("formaction",url)])
+        // static member table_ code = html.tagb "table" code
+        static member table (a:list<Atr>) = fun code -> html.tagb ("table",a) code
         static member tableData (lst:list<list<string>>) = fun (p:position) (size:int) ->
             writein ("<table style =\"margin-left: "+p.x.ToString()+"px; margin-top: "+p.y.ToString()+"px; font-size: "+size.ToString()+"px; position: absolute;\">")
             for m in 0..lst.Length-1 do
@@ -360,48 +365,48 @@ namespace Aqualis
                 writein "</tr>"
             writein "</table>"
             writein "</div>"
-        static member tr code = html.tagb "tr" code
-        static member tr (a:list<string*string>) = fun code -> html.tagb ("tr",a) code
-        static member th code = html.tagb "th" code
-        static member td code = html.tagb "td" code
-        static member td (a:list<string*string>) = fun code -> html.tagb ("td",a) code
+        // static member tr code = html.tagb "tr" code
+        static member tr (a:list<Atr>) = fun code -> html.tagb ("tr",a) code
+        static member th (a:list<Atr>) code = html.tagb ("th",a) code
+        static member td (a:list<Atr>) code = html.tagb ("td",a) code
+        // static member td (a:list<string*string>) = fun code -> html.tagb ("td",a) code
         static member strong(t:string) = html.tagb "strong" <| fun () -> writein t
-        static member enumerate code = html.tagb "ol" code
-        static member enumerate (a:list<string*string>) = fun code -> html.tagb ("ol",a) code
-        static member enumerate (a:Style) = fun code -> html.tagb ("ol",a) code
-        static member enumerateList (c:list<unit->unit>) = 
+        // static member enumerate code = html.tagb "ol" code
+        static member enumerate (a:list<Atr>) = fun code -> html.tagb ("ol",a) code
+        // static member enumerate (a:Style) = fun code -> html.tagb ("ol",a) code
+        static member enumerateList (a:list<Atr>) (c:list<unit->unit>) = 
             html.tagb "ol" <| fun () ->
                 for x in c do 
-                    html.item x
+                    html.item a x
         static member itemize code = html.tagb "ul" code
-        static member itemize (a:list<string*string>) = fun code -> html.tagb ("ul",a) code
-        static member itemize (a:Style) = fun code -> html.tagb ("ul",a) code
-        static member itemizeList (c:list<unit->unit>) = 
+        static member itemize (a:list<Atr>) = fun code -> html.tagb ("ul",a) code
+        // static member itemize (a:Style) = fun code -> html.tagb ("ul",a) code
+        static member itemizeList (a:list<Atr>) (c:list<unit->unit>) = 
             html.tagb "ul" <| fun () ->
                 for x in c do 
-                    html.item x
-        static member item code = html.tagb "li" code
-        static member item (a:Style) = fun code -> html.tagb ("li",a) code
-        static member item (a:list<string*string>) = fun code -> html.tagb ("li",a) code
+                    html.item a x
+        // static member item code = html.tagb "li" code
+        // static member item (a:Style) = fun code -> html.tagb ("li",a) code
+        static member item (a:list<Atr>) = fun code -> html.tagb ("li",a) code
         static member para code = html.tagb "p" code
-        static member para (a:list<string*string>) = html.tagb ("p",a)
+        static member para (a:list<Atr>) = html.tagb ("p",a)
         static member para (t:string) = html.tagb "p" <| fun () -> writein(t)
-        static member span(cls:string,t) = html.tagb ("span",["class",cls]) <| fun () -> writein(t)
-        static member span(cls:string) = fun code -> html.tagb ("span",["class",cls]) code
+        static member span(cls:string,t) = html.tagb ("span",[Atr("class",cls)]) <| fun () -> writein(t)
+        static member span(cls:string) = fun code -> html.tagb ("span",[Atr("class",cls)]) code
         static member span(cls:string, s:Style) = fun code -> html.tagb ("span",[s.atr; Atr("class",cls)]) code
-        static member link(url:string) = fun code -> html.tagb ("a",["href",url;]) code
+        static member link(url:string) = fun code -> html.tagb ("a",[Atr("href",url);]) code
         static member link(url:string, s:Style) = fun code -> html.tagb ("a",[s.atr; Atr("href",url)]) code
-        static member link_newtab(url:string) = fun code -> html.tagb ("a",["href",url; "target","_blank"]) code
-        static member select_disabled(x:string) = fun code -> html.tagb ("select",["name",x; "disabled","disabled"]) code
+        static member link_newtab(url:string) = fun code -> html.tagb ("a",[Atr("href",url); Atr("target","_blank")]) code
+        static member select_disabled(x:string) = fun code -> html.tagb ("select",[Atr("name",x); Atr("disabled","disabled")]) code
         static member time(datatime:string, s:Style) = fun code -> html.tagb ("time",[s.atr; Atr("datatime",datatime)]) code
-        static member article(cls:string) = fun code -> html.tagb ("article", ["class", cls]) code
+        static member article(cls:string) = fun code -> html.tagb ("article", [Atr("class", cls)]) code
         static member aside (cls:string, s:Style) = fun code -> html.tagb ("aside", [s.atr; Atr("class", cls)]) code
-        static member aside (a:list<string*string>) = fun code -> html.tagb ("aside",a) code
+        static member aside (a:list<Atr>) = fun code -> html.tagb ("aside",a) code
         static member section(cls:string, s:Style) = fun code -> html.tagb ("section", [s.atr; Atr("class", cls)]) code
-        static member option(value:string) = fun code -> html.tagb ("option",["value",value;]) code
-        static member option_selected(value:string) = fun code -> html.tagb ("option",["value",value;"selected","selected";]) code
-        static member div (a:list<string*string>) = fun code -> html.tagb ("div",a) code
-        static member button(value:string,onclick:string) = html.taga("input",["type","button"; "value",value; "onclick",onclick;])
+        static member option(value:string) = fun code -> html.tagb ("option",[Atr("value",value);]) code
+        static member option_selected(value:string) = fun code -> html.tagb ("option",[Atr("value",value);Atr("selected","selected");]) code
+        // static member div (a:list<Atr>) = fun code -> html.tagb ("div",a) code
+        static member button(value:string,onclick:string) = html.taga("input",[Atr("type","button"); Atr("value",value); Atr("onclick",onclick);])
         static member bold code = html.tagb "b" code
         static member latexTag (tagname:string) code =
             writein("\\begin{"+tagname+"}")
@@ -412,8 +417,8 @@ namespace Aqualis
             writein "\\[\\begin{align}"
             code()
             writein "\\end{align}\\]"
-        static member footer code = html.tagb ("footer", ["class","footer"]) <| fun () -> code()
-        static member footer (s:Style) = fun code -> html.tagb ("footer", s) <| fun () -> code()
+        static member footer code = html.tagb ("footer", [Atr("class","footer")]) <| fun () -> code()
+        static member footer (s:Style) = fun code -> html.tagb ("footer", [s.atr]) <| fun () -> code()
         static member br() = writein "<br>"
         static member hr() = writein "<hr>"
         static member setjs filename =
@@ -427,7 +432,7 @@ namespace Aqualis
                             {Key = "font-weight"; Value = "bold";}
                             {Key = "white-space"; Value = "nowrap";}
                             {Key = "font-size"; Value = "90px";}]
-            html.tagb ("div",s1+s) <| fun () ->
+            html.tagb ("div",[(s1+s).atr]) <| fun () ->
                 writein text
         static member contents (s:Style) (p:position) (text:string) =
             let s1 = Style [{Key = "margin-left"; Value = p.x.ToString()+"px";}
@@ -441,7 +446,7 @@ namespace Aqualis
                             {Key = "border-left-width"; Value= "25px";}
                             {Key = "border-left-color"; Value= "#1e6eff";}
                             {Key = "padding-left"; Value="10px";}]
-            html.tagb ("div",s1+s) <| fun () ->
+            html.tagb ("div",[(s1+s).atr]) <| fun () ->
                 writein text
         static member subtitle1 (s:Style) (p:position) (text:string) =
             let s1 = Style [{Key = "margin-left"; Value = p.x.ToString()+"px";}
@@ -455,7 +460,7 @@ namespace Aqualis
                             {Key = "border-left-width"; Value= "15px";}
                             {Key = "border-left-color"; Value= "#1e6eff";}
                             {Key = "padding-left"; Value="10px";}]
-            html.tagb ("div",s1+s) <| fun () ->
+            html.tagb ("div",[(s1+s).atr]) <| fun () ->
                 writein text
         static member subtitle2 (s:Style) (p:position) (text:string) =
             let s1 = Style [{Key = "margin-left"; Value = p.x.ToString()+"px";}
@@ -473,7 +478,7 @@ namespace Aqualis
                             {Key = "border-bottom-color"; Value= "#1e6eff";}
                             {Key = "padding-left"; Value="10px";}
                             {Key = "display"; Value="inline-block";}]
-            html.tagb ("div",s1+s) <| fun () ->
+            html.tagb ("div",[(s1+s).atr]) <| fun () ->
                 writein text
         static member textA (s:Style) = fun (p:position) (size:int) (color:string) (text:string) ->
             let s1 = Style [{Key = "margin-left"; Value = p.x.ToString()+"px";}
@@ -481,7 +486,7 @@ namespace Aqualis
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein text
                 
         static member eqA (s:Style) = fun (p:position) (size:int) (color:string) (text:string) ->
@@ -490,7 +495,7 @@ namespace Aqualis
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein ("\\("+text+"\\)")
                 
         static member eqC (s:Style) = fun (p:position) (size:int) (color:string) (text:list<string>) ->
@@ -499,11 +504,11 @@ namespace Aqualis
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 writein ("\\(\\begin{align}"+String.Join("\\\\",text)+"\\end{align}\\)")
                 
         static member canvas (s:Style) code =
-            html.tagb ("div", s) <| fun () ->
+            html.tagb ("div", [s.atr]) <| fun () ->
                 code ()
                 
         static member div (cls:string, s:Style) = fun code ->
@@ -546,7 +551,7 @@ namespace Aqualis
                             {Key = "border-width"; Value = borderWidth.ToString() + "px";}
                             {Key = "border-style"; Value = borderStyle;}
                             {Key = "border-width"; Value = borderColor;}]
-            html.tagb ("div", s1+s)
+            html.tagb ("div", [(s1+s).atr])
                 <| fun () ->
                     text |> List.iter (fun s -> writein (s+"<br>"))
                     writein ""
@@ -561,7 +566,7 @@ namespace Aqualis
                             {Key = "position"; Value = "absolute";}
                             {Key = "font-size"; Value = size.ToString()+"px";}
                             {Key = "color"; Value = color.ToString();}]
-            html.tagb ("div", s1+s) <| fun () ->
+            html.tagb ("div", [(s1+s).atr]) <| fun () ->
                 code()
                 
         static member equationFrame (s:Style) = fun (p:position) (size:int) (color:string) code ->
