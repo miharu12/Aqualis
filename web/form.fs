@@ -70,6 +70,8 @@ type TextBox(name:PHPdata) =
     member _.show() = t.input()
     /// テキストボックスの表示(送信テキストを表示)
     member _.show_copy() = t.input_copy()
+    /// 非表示テキストボックス(送信テキストを設定)
+    member _.show_copy_hidden() = t.input_copy_hidden()
     /// テキストボックスの表示(スタイル指定)
     member _.show(s:string) = t.input s
     member _.show(atr:list<Atr>) = t.input atr
@@ -79,6 +81,12 @@ type TextBox(name:PHPdata) =
     member _.show(text:PHPdata,atr:list<Atr>) = t.input(text,atr)
     /// テキストボックスの表示(表示テキストとスタイル指定)
     member _.show(text:num0,atr:list<Atr>) = t.input(PHPdata text,atr)
+    /// 非表示テキストボックス(表示テキストとスタイル指定)
+    member _.show_hidden(text:string,atr:list<Atr>) = t.input_hidden(text,atr)
+    /// 非表示テキストボックス(表示テキストとスタイル指定)
+    member _.show_hidden(text:PHPdata,atr:list<Atr>) = t.input_hidden(text,atr)
+    /// 非表示テキストボックス(表示テキストとスタイル指定)
+    member _.show_hidden(text:num0,atr:list<Atr>) = t.input_hidden(PHPdata text,atr)
     member _.show_lock(v:PHPdata) = t.input_lock v
     member _.show_lock(v:num0) = t.input_lock v
     member _.show_lock(v:string) = t.input_lock v
@@ -87,6 +95,8 @@ type TextBox(name:PHPdata) =
     member _.show_lock(v:string,atr:list<Atr>) = t.input_lock (v,atr)
     /// テキストボックスの表示(送信テキストを表示)
     member _.show_copy(atr:list<Atr>) = t.input_copy atr
+    /// 非表示テキストボックス(送信テキストを表示)
+    member _.show_copy_hidden(atr:list<Atr>) = t.input_copy_hidden atr
     /// テキストボックスの表示(送信テキストを表示、編集不可)
     member _.show_copy_lock() = t.input_copy_lock()
     /// テキストボックスの表示(パスワード入力用)

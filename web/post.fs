@@ -51,11 +51,31 @@ type post(id:PHPdata) =
             ]
         )
     ///テキストボックス
+    member _.input_hidden(value:PHPdata) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
+                "name", id
+                "value", value
+            ]
+        )
+    ///テキストボックス
     member _.input(value:string) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
+                "name", id
+                "value", PHPdata value
+            ]
+        )
+    ///テキストボックス
+    member _.input_hidden(value:string) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
                 "name", id
                 "value", PHPdata value
             ]
@@ -70,12 +90,31 @@ type post(id:PHPdata) =
                 "value", value
             ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
-         
+    member _.input_hidden(value:PHPdata,a:list<Atr>) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
+                "name", id
+                "value", value
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
+        )
+
     member _.input(value:string,a:list<Atr>) =
         html.taga(
             "input",
             [
                 "type", PHPdata "text"
+                "name", id
+                "value", PHPdata value
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
+        )
+
+    member _.input_hidden(value:string,a:list<Atr>) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
                 "name", id
                 "value", PHPdata value
             ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
@@ -198,6 +237,26 @@ type post(id:PHPdata) =
             ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
         )
 
+    ///テキストボックス
+    member _.input_hidden(value:num0) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
+                "name", id
+                "value", PHPdata value
+            ]
+        )
+    member _.input_hidden(value:num0,a:list<Atr>) =
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
+                "name", id
+                "value", PHPdata value
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
+        )
+
     member _.input_lock(value:num0) =
         html.taga(
             "input",
@@ -254,6 +313,25 @@ type post(id:PHPdata) =
             "input",
             [
                 "type", PHPdata "text"
+                "name", id
+                "value", this.get
+            ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
+        )
+    ///テキストボックス（送信済みのメッセージを表示）
+    member this.input_copy_hidden() = 
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
+                "name", id
+                "value", this.get
+            ]
+        )
+    member this.input_copy_hidden(a:list<Atr>) = 
+        html.taga(
+            "input",
+            [
+                "type", PHPdata "hidden"
                 "name", id
                 "value", this.get
             ]@(a |> List.map (fun p -> p.name,PHPdata p.value))
