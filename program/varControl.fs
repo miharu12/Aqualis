@@ -275,6 +275,44 @@ namespace Aqualis
             |Numeric ->
                 ()
                 
+        ///<summary>コード出力(インデントあり・改行なし・行頭ヘッダ付き)</summary>
+        member this.codewritei (h:string,ss:string) = 
+            match lan with
+            |Fortran ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |C99 ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |LaTeX ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |HTML ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |HTMLSequenceDiagram ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |Python ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |JavaScript ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |PHP ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code)) slist
+            |Numeric ->
+                ()
+                
         ///<summary>コード出力(インデントなし・改行あり)</summary>
         member this.codewriten (ss:string) = 
             match lan with
@@ -348,6 +386,44 @@ namespace Aqualis
                 if ss<>"" then 
                     let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
                     Array.iter (fun code -> this.cwrite(this.indent.space + code + "\n")) slist
+            |Numeric ->
+                ()
+
+        ///<summary>コード出力(インデントあり・改行あり・行頭ヘッダ付き)</summary>
+        member this.codewritein (h:string,ss:string) = 
+            match lan with
+            |Fortran ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |C99 ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |LaTeX ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |HTML ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |HTMLSequenceDiagram ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |Python ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |JavaScript ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
+            |PHP ->
+                if ss<>"" then 
+                    let slist = ss.Split([|'\n'|],StringSplitOptions.RemoveEmptyEntries) //改行文字で分割
+                    Array.iter (fun code -> this.cwrite(h + this.indent.space + code + "\n")) slist
             |Numeric ->
                 ()
 
