@@ -181,6 +181,7 @@ namespace Aqualis
         member _.codewritei(s:string) = cwriter.codewritei s
         member _.codewriten(s:string) = cwriter.codewriten s
         member _.codewritein(s:string) = cwriter.codewritein s
+        member _.codewritein(h:string,s:string) = cwriter.codewritein (h,s)
         member _.indentInc() = cwriter.indent.inc()
         member _.indentDec() = cwriter.indent.dec()
         member _.appendOpen() = cwriter.appendOpen()
@@ -234,6 +235,7 @@ namespace Aqualis
         let writei(s:string) = programList[prIndex].codewritei s
         let writen(s:string) = programList[prIndex].codewriten s
         let writein(s:string) = programList[prIndex].codewritein s
+        let hwritein(h:string,s:string) = programList[prIndex].codewritein (h,s)
         let eqbr() = writein "\\\\"
         let language() = programList[prIndex].language
         

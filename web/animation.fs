@@ -474,12 +474,12 @@ module htmlexpr =
         /// 内部要素のないタグ
         /// </summary>
         static member taga (t:string,lst:list<string*PHPdata>) =
-            writein("<"+t+" ")
+            writei("<"+t+" ")
             programList[prIndex].indentInc()
             for a,s in lst do
-                writein(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?>")
+                write(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?> ")
             programList[prIndex].indentDec()
-            writein " />"
+            writen " />"
         /// <summary>
         /// 内部要素のあるタグ
         /// </summary>
@@ -487,10 +487,10 @@ module htmlexpr =
             if lst.Length=0 then
                 write("<"+t+">")
             else
-                writen("<"+t+" ")
+                write("<"+t+" ")
                 programList[prIndex].indentInc()
                 for a,s in lst do
-                    writen(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?>")
+                    write(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?> ")
                 programList[prIndex].indentDec()
                 write ">"
             code()
@@ -502,12 +502,12 @@ module htmlexpr =
             if lst.Length=0 then
                 writein("<"+t+">")
             else
-                writein("<"+t+" ")
+                writei("<"+t+" ")
                 programList[prIndex].indentInc()
                 for a,s in lst do
-                    writein(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?>")
+                    writei(a + " = <?php echo \"\\\"\"." + s.code + " . \"\\\"\"; ?> ")
                 programList[prIndex].indentDec()
-                writein ">"
+                writen ">"
             code()
             writein ("</"+t+">")
         /// <summary>

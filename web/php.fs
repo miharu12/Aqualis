@@ -13,7 +13,7 @@ type PHPbool(x:string) =
     
     member this.name with get() = x
     static member var(x) = PHPbool("$"+x)
-    static member (<==) (a:PHPbool,b:PHPbool) = writein ("<?php " + a.name + " = " + b.name + " ?>")
+    static member (<==) (a:PHPbool,b:PHPbool) = hwritein ("<?php ", a.name + " = " + b.name + " ?>")
     
 type PHPdata(x:list<reduceExprString>) =
     new(x:string) = PHPdata [RStr x]
@@ -50,19 +50,19 @@ type PHPdata(x:list<reduceExprString>) =
 
     static member array(arrayname:string) = 
         let c = PHPdata.var arrayname
-        writein ("<?php $"+arrayname+" = array(); ?>")
+        hwritein ("<?php ", "$"+arrayname+" = array(); ?>")
         c
         
     static member array(arrayname:string,data:list<string*string>) = 
         let c = PHPdata.var arrayname
-        writein ("<?php $"+arrayname+" = array(); ?>")
-        writein ("<?php $"+arrayname+"[] = array("+String.Join(",",data |> List.map (fun (a,b) -> "'"+a+"'=>'"+b+"'"))+"); ?>")
+        hwritein ("<?php ", "$"+arrayname+" = array(); ?>")
+        hwritein ("<?php ", "$"+arrayname+"[] = array("+String.Join(",",data |> List.map (fun (a,b) -> "'"+a+"'=>'"+b+"'"))+"); ?>")
         c
 
     static member array(arrayname:string,data:list<string*PHPdata>) = 
         let c = PHPdata.var arrayname
-        writein ("<?php $"+arrayname+" = array(); ?>")
-        writein ("<?php $"+arrayname+"[] = array("+String.Join(",",data |> List.map (fun (a,b) -> "'"+a+"'=>"+b.code))+"); ?>")
+        hwritein ("<?php ", "$"+arrayname+" = array(); ?>")
+        hwritein ("<?php ", "$"+arrayname+"[] = array("+String.Join(",",data |> List.map (fun (a,b) -> "'"+a+"'=>"+b.code))+"); ?>")
         c
     // static member array(arrayname:string,data:list<string*PHPdata>) = 
     //     let c = PHPdata.var arrayname
@@ -74,12 +74,12 @@ type PHPdata(x:list<reduceExprString>) =
     // static member array_push(a:PHPdata,el:PHPdata) = php.phpcode <| fun () -> write("array_push("+a.code+","+el.code+")")
     // static member array_push(a:PHPdata,el:num0) = php.array_push(a,PHPdata el)
     
-    member this.push (x:list<PHPdata>) = writein ("<?php array_push(" + this.code + ", " + String.Join(",",List.map(fun (q:PHPdata) -> q.code) x) + "); ?>")
+    member this.push (x:list<PHPdata>) = hwritein ("<?php ", "array_push(" + this.code + ", " + String.Join(",",List.map(fun (q:PHPdata) -> q.code) x) + "); ?>")
     member this.push (x:PHPdata) = this.push [x]
     // member this.push (x:num0) = this.push [PHPdata x]
     // member this.push (x:list<exprString>) = writein ("<?php array_push(" + this.code + ", " + String.Join(",",x |> List.map(fun q -> q.toString("",Direct))) + "); ?>")
     ///配列に要素を複数追加
-    member this.push (x:list<num0>) = writein ("<?php array_push(" + this.code + ", " + String.Join(",",List.map(fun (q:num0) -> q.code) x) + "); ?>")
+    member this.push (x:list<num0>) = hwritein ("<?php ", "array_push(" + this.code + ", " + String.Join(",",List.map(fun (q:num0) -> q.code) x) + "); ?>")
     ///配列に文字列要素を複数追加
     member this.push (x:list<string>) = this.push (List.map(fun (q:string) -> PHPdata q) x)
     ///配列に要素を追加
@@ -110,17 +110,17 @@ type PHPdata(x:list<reduceExprString>) =
 
     member this.foreach code =
         ch.i <| fun i ->
-            php.phpcode <| fun () -> write("for("+i.code+"=0; "+i.code+"<count("+this.code+"); "+i.code+"++):")
+            php.phpcode <| fun () -> writei("for("+i.code+"=0; "+i.code+"<count("+this.code+"); "+i.code+"++):")
             programList[prIndex].indentInc()
             code i
             programList[prIndex].indentDec()
-            php.phpcode <| fun () -> write "endfor;"
+            php.phpcode <| fun () -> writei "endfor;"
     member this.foreach (key:PHPdata,value:PHPdata) = fun code ->
         ch.i <| fun i ->
-            php.phpcode <| fun () -> write("foreach("+this.code+" as "+key.code+" => "+value.code+"):")
+            php.phpcode <| fun () -> writei("foreach("+this.code+" as "+key.code+" => "+value.code+"):")
             code()
-            php.phpcode <| fun () -> write "endforeach;"
-    static member (<==) (a:PHPdata,b:PHPdata) = writein ("<?php " + a.code + " = " + b.code + "; ?>")
+            php.phpcode <| fun () -> writei "endforeach;"
+    static member (<==) (a:PHPdata,b:PHPdata) = hwritein ("<?php ", a.code + " = " + b.code + "; ?>")
     static member (<==) (a:PHPdata,b:string) = a <== PHPdata b
     static member (<==) (a:PHPdata,b:num0) = a <== PHPdata b
     static member (<==) (a:PHPdata,b:int) = a <== PHPdata (I b)
@@ -151,20 +151,21 @@ and php =
             
     /// htmlコード内にphpコードを埋め込み
     static member phpcode (code:unit->unit) =
-        writei "<?php "
+        write "<?php "
         code()
         writen " ?>"
     /// POST送信されたデータを表示
-    static member postCheck() = writein "<?php print_r($_POST); ?>"
+    static member postCheck() = hwritein("<?php ", "print_r($_POST); ?>")
     /// POST送信されたファイルを表示
-    static member postFileCheck() = writein "<?php print_r($_FILES); ?>"
+    static member postFileCheck() = hwritein("<?php ", "print_r($_FILES); ?>")
     /// 論理積
     static member And (x:list<bool0>) = bool0(Var(Nt, "(" + String.Join(" && ", x |> List.map (fun s -> s.code)) + ")",NaN))
     /// 論理和
     static member Or (x:list<bool0>) = bool0(Var(Nt, "(" + String.Join(" || ", x |> List.map (fun s -> s.code)) + ")",NaN))
     /// 指定された変数がPOST送信されたか判定
     static member isset (x:PHPdata) = bool0(Var(Nt, "isset(" + x.code + ")",NaN))
-    static member echo (x:PHPdata) = php.phpcode <| fun () -> write("echo " + x.code + ";")
+    static member isNotset (x:PHPdata) = bool0(Var(Nt, "!isset(" + x.code + ")",NaN))
+    static member echo (x:PHPdata) = php.phpcode <| fun () -> writei("echo " + x.code + ";")
     // static member echo (x:exprString) = php.phpcode <| fun () -> write("echo " + x.toString(".",StrQuotation) + ";")
     /// 文字列を表示
     static member echo (x:string) = php.echo (PHPdata x)
@@ -174,7 +175,7 @@ and php =
     static member file_get_contents (filename:PHPdata) = PHPdata.f("file_get_contents(" + filename.code + ")")
     static member file_get_contents (filename:string) = php.file_get_contents (PHPdata filename)
     /// ファイルにテキストを書き込み
-    static member file_put_contents (filename:PHPdata,x:PHPdata) = php.phpcode <| fun () -> write("file_put_contents("+filename.code+","+x.code+");")
+    static member file_put_contents (filename:PHPdata,x:PHPdata) = php.phpcode <| fun () -> writei("file_put_contents("+filename.code+","+x.code+");")
     /// ファイルにテキストを書き込み
     static member file_put_contents (filename:string,x:PHPdata) = php.file_put_contents(PHPdata filename, x)
     /// JSONファイルをデコード
@@ -196,30 +197,30 @@ and php =
     /// ファイルを開く
     static member fopen(filename:string,rw:FileOpenMode) = php.fopen(PHPdata filename, rw)
     /// ファイルに書き込み
-    static member fwrite(fp:PHPdata,t:PHPdata) = php.phpcode <| fun () -> write("fwrite("+fp.code+", "+t.code+");")
+    static member fwrite(fp:PHPdata,t:PHPdata) = php.phpcode <| fun () -> writei("fwrite("+fp.code+", "+t.code+");")
     /// ファイルに書き込み
     static member fwrite(fp:PHPdata,t:num0) = php.fwrite(fp, PHPdata t)
     /// ファイルに書き込み
     static member fwrite(fp:PHPdata,t:string) = php.fwrite(fp, PHPdata t)
     /// ファイルに書き込み
-    static member fwrite(fp:PHPdata,t:int) = php.phpcode <| fun () -> write("fwrite("+fp.code+", "+t.ToString()+");")
+    static member fwrite(fp:PHPdata,t:int) = php.phpcode <| fun () -> writei("fwrite("+fp.code+", "+t.ToString()+");")
     /// ファイルにShift-JISで書き込み
-    static member fwrite_SJIS(fp:PHPdata,t:PHPdata) = php.phpcode <| fun () -> write("fwrite("+fp.code+", mb_convert_encoding("+t.code+", 'SJIS-win', 'UTF-8'));")
+    static member fwrite_SJIS(fp:PHPdata,t:PHPdata) = php.phpcode <| fun () -> writei("fwrite("+fp.code+", mb_convert_encoding("+t.code+", 'SJIS-win', 'UTF-8'));")
     /// ファイルにShift-JISで書き込み
-    static member fwrite_SJIS(fp:PHPdata,t:num0) = php.phpcode <| fun () -> write("fwrite("+fp.code+", mb_convert_encoding("+t.code+", 'SJIS-win', 'UTF-8'));")
+    static member fwrite_SJIS(fp:PHPdata,t:num0) = php.phpcode <| fun () -> writei("fwrite("+fp.code+", mb_convert_encoding("+t.code+", 'SJIS-win', 'UTF-8'));")
     /// ファイルにShift-JISで書き込み
-    static member fwrite_SJIS(fp:PHPdata,t:string) = php.phpcode <| fun () -> write("fwrite("+fp.code+", mb_convert_encoding(\""+t+"\", 'SJIS-win', 'UTF-8'));")
+    static member fwrite_SJIS(fp:PHPdata,t:string) = php.phpcode <| fun () -> writei("fwrite("+fp.code+", mb_convert_encoding(\""+t+"\", 'SJIS-win', 'UTF-8'));")
     /// ファイルを閉じる
-    static member fclose(filename:PHPdata) = php.phpcode <| fun () -> write("fclose("+filename.code+");")
+    static member fclose(filename:PHPdata) = php.phpcode <| fun () -> writei("fclose("+filename.code+");")
     /// 正規表現
-    static member preg_match(p:PHPdata,text:PHPdata,mat:PHPdata) = php.phpcode <| fun () -> write("preg_match("+p.code+","+text.code+","+mat.code+");")
+    static member preg_match(p:PHPdata,text:PHPdata,mat:PHPdata) = php.phpcode <| fun () -> writei("preg_match("+p.code+","+text.code+","+mat.code+");")
     /// ファイルのダウンロード
     static member download(filename:string) =
-        php.phpcode <| fun () -> write "header('Content-Type: application/octet-stream');"
-        php.phpcode <| fun () -> write ("header('Content-Length: '.filesize(\""+filename+"\"));")
-        php.phpcode <| fun () -> write ("header('Content-Disposition: attachment; filename=\""+filename+"\"');")
-        php.phpcode <| fun () -> write ("readfile(\""+filename+"\");")
-        php.phpcode <| fun () -> write "exit;"
+        php.phpcode <| fun () -> writei "header('Content-Type: application/octet-stream');"
+        php.phpcode <| fun () -> writei ("header('Content-Length: '.filesize(\""+filename+"\"));")
+        php.phpcode <| fun () -> writei ("header('Content-Disposition: attachment; filename=\""+filename+"\"');")
+        php.phpcode <| fun () -> writei ("readfile(\""+filename+"\");")
+        php.phpcode <| fun () -> writei "exit;"
     /// 整数に変換
     static member intval(s:PHPdata) = PHPdata.f("intval("+s.code+")")
     /// 配列要素の和
@@ -231,9 +232,9 @@ and php =
     /// 否定演算
     static member nt (data:bool0) = bool0(Var(Nt, "!"+data.code,NaN))
     ///<summary>送信データをキャッシュしない（Firefoxでフォームの選択肢がリロード前から保持される現象を回避）</summary>
-    static member set_nocache() = php.phpcode <| fun () -> write "header( 'Cache-Control: no-store, no-cache, must-revalidate' );"
+    static member set_nocache() = php.phpcode <| fun () -> writei "header( 'Cache-Control: no-store, no-cache, must-revalidate' );"
     /// HTTPヘッダを取得
-    static member header(data:PHPdata) = php.phpcode <| fun () -> write("header("+data.code+");")
+    static member header(data:PHPdata) = php.phpcode <| fun () -> writei("header("+data.code+");")
     /// HTTPヘッダを取得
     static member header(data:string) = php.header(PHPdata data)
     // 小数に変換
@@ -269,7 +270,7 @@ and php =
     /// 文字列分割
     static member explode(x:string,y:PHPdata) = PHPdata.f("explode('"+x+"',"+y.code+")")
     /// 配列のソート
-    static member sort(data:PHPdata) = php.phpcode <| fun () -> write("sort("+data.code+");")
+    static member sort(data:PHPdata) = php.phpcode <| fun () -> writei("sort("+data.code+");")
     /// 整数に変換
     static member toint(x:PHPdata) = num0(Var(It 4, "(int)"+x.code, NaN))
     /// 配列要素数
@@ -277,16 +278,16 @@ and php =
     /// 拡張子を除いたファイル名
     static member filename_withoutExtension(x:PHPdata) = PHPdata.f("pathinfo("+x.code+", PATHINFO_FILENAME)")
     /// ファイル削除
-    static member unlink(data:PHPdata) = php.phpcode <| fun () -> write("unlink("+data.code+");")
+    static member unlink(data:PHPdata) = php.phpcode <| fun () -> writei("unlink("+data.code+");")
     /// 配列要素をランダムに入れ替え
-    static member shuffle(data:PHPdata) = php.phpcode <| fun () -> write("shuffle("+data.code+");")
+    static member shuffle(data:PHPdata) = php.phpcode <| fun () -> writei("shuffle("+data.code+");")
     /// タイムゾーン設定
-    static member setTimeZone(location:string) = php.phpcode <| fun () -> write("date_default_timezone_set('"+location+"');")
+    static member setTimeZone(location:string) = php.phpcode <| fun () -> writei("date_default_timezone_set('"+location+"');")
     /// メール送信
     static member sendMail(body:PHPdata,subject:PHPdata,fromAddress:PHPdata,toAddress:PHPdata) =
-        php.phpcode <| fun () -> write "mb_language(\"ja\");"
-        php.phpcode <| fun () -> write "mb_internal_encoding(\"UTF-8\");"
-        php.phpcode <| fun () -> write("mb_send_mail("+toAddress.code+","+subject.code+","+body.code+","+("From: "++fromAddress).code+");")
+        php.phpcode <| fun () -> writei "mb_language(\"ja\");"
+        php.phpcode <| fun () -> writei "mb_internal_encoding(\"UTF-8\");"
+        php.phpcode <| fun () -> writei("mb_send_mail("+toAddress.code+","+subject.code+","+body.code+","+("From: "++fromAddress).code+");")
     // /// メール送信
     // static member sendMail(body:exprString,subject:exprString,fromAddress:string,toAddress:PHPdata) =
     //     php.phpcode <| fun () -> write("mb_language(\"ja\");")
@@ -301,7 +302,7 @@ and php =
     static member sendMail(body:PHPdata,subject:PHPdata,smtp:PHPdata,fromAddress:PHPdata,toAddress:PHPdata) =
         let cmd = PHPdata.var "cmd"
         cmd <== "echo \\\"" ++ body ++ "\\\" | mail -s \\\"" ++ subject ++ "\\\" -S smtp=smtp://" ++ smtp ++ ":25 -r " ++ fromAddress ++ " " ++ toAddress
-        php.phpcode <| fun () -> write("exec("+cmd.code+");")
+        php.phpcode <| fun () -> writei("exec("+cmd.code+");")
     // /// メール送信
     // static member sendMail(body:PHPdata,subject:PHPdata,fromAddress:string,toAddress:PHPdata) =
     //     php.phpcode <| fun () -> write("mb_language(\"ja\");")
@@ -316,7 +317,7 @@ and php =
     static member sendDiscord(body:PHPdata,webhookURL:PHPdata) =
         let cmd = PHPdata.var "cmd"
         cmd <== "curl -H \\\"Content-Type: application/json\\\" -X POST -d \\\"{\\\\\\\"username\\\\\\\": \\\\\\\"Ediass Notification\\\\\\\", \\\\\\\"content\\\\\\\": \\\\\\\""++body++"\\\\\\\"}\\\" " ++ webhookURL
-        php.phpcode <| fun () -> write("exec("+cmd.code+");")
+        php.phpcode <| fun () -> writei("exec("+cmd.code+");")
     // /// Discordへメッセージ送信
     // static member sendDiscord(body:string,webhookURL:string) =
     //     let cmd = PHPdata.v "cmd"
@@ -329,19 +330,19 @@ and php =
     /// ファイルダウンロード
     static member file_download(file:PHPdata) =
         php.phpcode <| fun () ->
-            write "header('Content-Type: application/octet-stream');"
+            writei "header('Content-Type: application/octet-stream');"
         php.phpcode <| fun () ->
-            write "header('Content-Transfer-Encoding: Binary');"
+            writei "header('Content-Transfer-Encoding: Binary');"
         php.phpcode <| fun () ->
-            write("header('Content-disposition: attachment; filename='.basename("+file.code+"));")
+            writei("header('Content-disposition: attachment; filename='.basename("+file.code+"));")
         php.phpcode <| fun () ->
-            write("header('Content-Length: '.filesize("+file.code+"));")
+            writei("header('Content-Length: '.filesize("+file.code+"));")
         php.phpcode <| fun () ->
-            write "while (ob_get_level()) { ob_end_clean(); }"
+            writei "while (ob_get_level()) { ob_end_clean(); }"
         php.phpcode <| fun () ->
-            write("readfile("+file.code+");")
+            writei("readfile("+file.code+");")
         php.phpcode <| fun () ->
-            write "exit;"
+            writei "exit;"
     /// ファイルパスからファイル名取得
     static member basename(file:PHPdata) = PHPdata.f("basename("+file.code+")")
     /// 改行文字
