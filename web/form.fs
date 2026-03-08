@@ -14,6 +14,8 @@ type Button(name:PHPdata) =
     new(name:string) = Button (PHPdata name)
     /// ボタンが押されたか判定
     member _.isset with get() = php.isset b.get
+    /// ボタンが押されていないか判定
+    member _.isNotset with get() = php.isNotset b.get
     /// <summary>
     /// ボタンの表示
     /// </summary>

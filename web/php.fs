@@ -164,6 +164,7 @@ and php =
     static member Or (x:list<bool0>) = bool0(Var(Nt, "(" + String.Join(" || ", x |> List.map (fun s -> s.code)) + ")",NaN))
     /// 指定された変数がPOST送信されたか判定
     static member isset (x:PHPdata) = bool0(Var(Nt, "isset(" + x.code + ")",NaN))
+    static member isNotset (x:PHPdata) = bool0(Var(Nt, "!isset(" + x.code + ")",NaN))
     static member echo (x:PHPdata) = php.phpcode <| fun () -> writei("echo " + x.code + ";")
     // static member echo (x:exprString) = php.phpcode <| fun () -> write("echo " + x.toString(".",StrQuotation) + ";")
     /// 文字列を表示
